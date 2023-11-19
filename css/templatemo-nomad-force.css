@@ -46,7 +46,9 @@ My Helper styling
 }
 
 .calendly{
-
+  @media screen and (max-width:800px){
+    
+  }
 }
 
 /*---------------------------------------
@@ -860,6 +862,10 @@ strong {
 
 @media all AND (max-width: 1200px) {
 	
+  .testimonials-container{
+    flex-direction: row;
+  }
+
 	.testimonials {
     flex-direction: column;
 		align-items: center;
