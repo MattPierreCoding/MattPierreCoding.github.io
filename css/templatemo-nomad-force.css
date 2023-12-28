@@ -15,6 +15,11 @@ My Helper styling
 
 }
 
+.pastWordInfo{
+  align-self: center;
+  padding-left: 1vw;
+  text-wrap: wrap;
+}
 
 .news-size{
   width: 100%;
@@ -43,6 +48,7 @@ My Helper styling
  display: flex;
  flex-direction: column;
  justify-content: space-evenly;
+ max-height: 100vh;
 }
 
 .calendly{
