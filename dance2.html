@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="themes/6/js-image-slider.css" rel="stylesheet" type="text/css" />
+    <script src="themes/6/mcVideoPlugin.js" type="text/javascript"></script>
+    <script src="themes/6/js-image-slider.js" type="text/javascript"></script>
+  </head>
+  <body>
+  <div id="sliderFrame">
+    <div id="slider">
+        <video preload="none" data-image="jsImgSlider/images/image-slider-1.jpg" controls>
+            <source data-src="c1.mp4" type="video/mp4" />
+            <source data-src="c2.mp4" type="video/mp4" />
+        </video>
+        <a class="lazyImage" href="jsImgSlider/images/image-slider-3.jpg">Slide 3</a>
+        <audio preload="none" data-image="jsImgSlider/images/image-slider-5.jpg"
+            data-alt="Lorem ipsum dolor sit amet" controls>
+            <source data-src="prod/mcaudio.mp3" type="audio/mpeg">
+            <source data-src="prod/mcaudio.ogg" type="audio/ogg">
+        </audio>
+    </div>
+    <!--thumbnails-->
+    <div id="thumbs" data-autovideo="true">
+        <div class="thumb">
+            <img src="jsImgSlider/images/thumb1.jpg" /><div class="playvideo"></div>
+        </div>
+        <div class="thumb">
+            <img src="jsImgSlider/images/thumb3.jpg" />
+        </div>
+        <div class="thumb">
+            <img src="jsImgSlider/images/thumb5.jpg" /><div class="playvideo"></div>
+        </div>
+    </div>
+  </div>
+  </body>
+</html>
