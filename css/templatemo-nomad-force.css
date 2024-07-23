@@ -436,7 +436,7 @@ strong {
 .team-image {
   width: 1500px;
   height: 1000px;
-  max-height: 635px;
+  /* max-height: 635px; */
   min-height: 475px;
   object-fit: cover;
 }
