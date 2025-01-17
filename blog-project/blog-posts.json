@@ -1,0 +1,26 @@
+[
+    {
+        "title": "Testing My Code",
+        "date": "2023-10-01T12:00:00Z",
+        "summary": "Learn why testing your code is crucial and the different types of tests you can write.",
+        "link": "post1.html",
+        "image": "images/tutoring.png",
+        "type": "Tech"
+    },
+    {
+        "title": "Another Blog Post Title",
+        "date": "2023-09-25T12:00:00Z",
+        "summary": "This is another summary of a different blog post. It also aims to capture the reader's interest.",
+        "link": "post1.html",
+        "image": "",
+        "type": "Education"
+    },
+    {
+        "title": "Teacher's College",
+        "date": "2023-09-25T12:00:00Z",
+        "summary": "This is another summary of a different blog post. It also aims to capture the reader's interest.",
+        "link": "post1.html",
+        "image": "../icon.jpg",
+        "type": "Other"
+    }
+]
