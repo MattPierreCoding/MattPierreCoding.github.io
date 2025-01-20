@@ -31,7 +31,9 @@ My Helper styling
 
 }
 .news-image-helper{
-  width: 10rem;
+  width: 7rem;
+  /* width: 100%; Change this to make images responsive */
+  height: auto; /* Maintain aspect ratio */
 }
 .news-text-helper{
   display: inline-block;
@@ -51,11 +53,7 @@ My Helper styling
  max-height: 100vh;
 }
 
-.calendly{
-  @media screen and (max-width:800px){
-    
-  }
-}
+
 
 /*---------------------------------------
   CUSTOM PROPERTIES ( VARIABLES )             
@@ -434,8 +432,8 @@ strong {
 -----------------------------------------*/
 .about-image,
 .team-image {
-  width: 1500px;
-  height: 1000px;
+  height: 100%;
+  width: -webkit-fill-available;
   /* max-height: 635px; */
   min-height: 475px;
   object-fit: cover;
@@ -486,6 +484,51 @@ strong {
 /*---------------------------------------
   NEWS & EVENTS               
 -----------------------------------------*/
+.news-thumb {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.news-image-hover img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.news-category {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.news-text-info {
+  margin-top: 10px;
+}
+
+.news-title {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.news-title-link {
+  color: #35424a;
+  text-decoration: none;
+}
+
+.news-title-link:hover {
+  text-decoration: underline;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+p {
+  margin-top: 10px;
+}
 
 .news,
 .related-news {
@@ -704,6 +747,17 @@ strong {
 
 @media screen and (max-width: 991px) {
 
+  .news{
+    max-height: fit-content;
+  }
+
+  .news-image,
+  .news-two-column .news-image {
+      width: 35vw;
+      justify-content: center;
+      height: auto;
+  }
+  
   .about-image{
     max-height: fit-content;
     object-fit: contain;
@@ -797,7 +851,10 @@ strong {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
+	height: auto;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  flex-direction: column;
 }
 
 #Testimonies .h2 {

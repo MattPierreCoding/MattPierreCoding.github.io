@@ -50,3 +50,33 @@ body {
         font-size: 24px;
     }
 }
+
+.news-summary{
+    font-size: 100%;
+}
+
+/* Add this to your templatemo-nomad-force.css or a custom CSS file */
+
+/* Ensure the blog section does not overflow on smaller screens */
+@media screen and (max-width: 1000px) {
+    .news {
+        padding: 20px; /* Adjust padding as needed */
+        
+    }
+
+    .news-thumb {
+        margin-bottom: 20px; /* Add margin between news items */
+    }
+
+    .news .container {
+        overflow-x: hidden; /* Prevent horizontal overflow */
+    }
+
+    .news .row {
+        flex-direction: column; /* Stack columns vertically */
+    }
+
+    .news .col-12 {
+        width: 100%; /* Ensure full width for columns */
+    }
+}
