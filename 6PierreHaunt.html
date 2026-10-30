@@ -368,6 +368,33 @@
       font-weight: bold;
     }
 
+    .table-values-chart {
+      width: min(100%, 520px);
+      margin: 1rem auto;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .table-values-chart th,
+    .table-values-chart td {
+      border: 1px solid var(--accent-purple);
+      padding: 0.6rem;
+    }
+
+    .table-values-chart th {
+      background: rgba(40, 20, 60, 0.8);
+      color: var(--accent-orange);
+    }
+
+    .table-values-chart input {
+      width: 3.5rem;
+      height: 2.5rem;
+      margin: 0;
+      padding: 0.25rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
     .class-seal-input {
       display: block;
       width: 100%;
@@ -504,23 +531,23 @@
       <div class="team-select-grid">
         <button class="team-btn" onclick="selectTeam('Specter')">
           <span>👻 Team Specter</span>
-          <small style="color:#aaa;">Path: Desk → Clock → Bookshelf → Board</small>
+          <small style="color:#aaa;">Path: Desk → Clock → Bookshelf → Red Table → Recess Doors</small>
         </button>
         <button class="team-btn" onclick="selectTeam('Phantom')">
           <span>🎃 Team Phantom</span>
-          <small style="color:#aaa;">Path: Clock → Bookshelf → Board → Desk</small>
+          <small style="color:#aaa;">Path: Recess Doors → Desk → Clock → Bookshelf → Red Table</small>
         </button>
         <button class="team-btn" onclick="selectTeam('Banshee')">
           <span>🕯️ Team Banshee</span>
-          <small style="color:#aaa;">Path: Bookshelf → Board → Desk → Clock</small>
+          <small style="color:#aaa;">Path: Bookshelf → Red Table → Recess Doors → Desk → Clock</small>
         </button>
         <button class="team-btn" onclick="selectTeam('Gargoyle')">
           <span>🦇 Team Gargoyle</span>
-          <small style="color:#aaa;">Path: Board → Desk → Clock → Bookshelf</small>
+          <small style="color:#aaa;">Path: Red Table → Recess Doors → Desk → Clock → Bookshelf</small>
         </button>
         <button class="team-btn" onclick="selectTeam('Shadow')">
           <span>🕷️ Team Shadow</span>
-          <small style="color:#aaa;">Path: Desk → Bookshelf → Clock → Board</small>
+          <small style="color:#aaa;">Path: Clock → Bookshelf → Red Table → Recess Doors → Desk</small>
         </button>
       </div>
     </div>
@@ -535,7 +562,7 @@
           <span id="current-team-display" style="color:#fff; font-weight:bold;"></span>
         </div>
 
-        <div class="timer-display" id="timer">90:00</div>
+        <div class="timer-display" id="timer">45:00</div>
 
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <span style="font-size: 0.85rem; color:#aaa;">Vault Keys:</span>
@@ -545,6 +572,7 @@
             <div class="fragment-slot" id="slot-3">?</div>
             <div class="fragment-slot" id="slot-4">?</div>
             <div class="fragment-slot" id="slot-5">?</div>
+            <div class="fragment-slot" id="slot-6">?</div>
           </div>
         </div>
       </div>
@@ -659,39 +687,41 @@
         <p id="feedback-3" style="margin-top: 0.5rem; font-weight: bold;"></p>
       </div>
 
-      <!-- STAGE 4: Front Board Stage (Coordinate Grid) -->
+      <!-- STAGE 4: Hallway Red Table (Coordinate Grid) -->
       <div id="stage-board" class="card puzzle-stage">
-        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Front Board</h2>
-        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: The Front Board</p>
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Red Table</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: Red Table in the Hallway</p>
 
         <div class="encounter-box">
-          <h3>Spectral Encounters at the Front Board</h3>
+          <h3>Spectral Encounters at the Red Table</h3>
           <p>
-            <strong>Evil Zoe</strong> drifts across the marker tray, drawing purple grid lines in dark energy. 
-            <strong>Evil Jacob</strong> floats near the top border, erasing plotting points when teams approach. 
-            <strong>Evil Timnit</strong> steps directly out of the screen, challenging teams to plot exact (X, Y) vectors. 
-            <strong>Evil Linkyn</strong> drags phantom clock hands toward cursed coordinates. 
-            <strong>Evil Jimmy</strong> materializes with a flickering lantern casting false shadows over (0,0), while 
-            <strong>Evil Cherish</strong> holds the final clock tower hand until coordinates align!
+            <strong>Evil Zoe</strong> draws glowing coordinate axes across the red tabletop. 
+            <strong>Evil Jacob</strong> shifts the grid whenever a team looks away. 
+            <strong>Evil Timnit</strong> challenges teams to plot exact (X, Y) points. 
+            <strong>Evil Linkyn</strong> whispers reversed coordinates from the hallway. 
+            <strong>Evil Jimmy</strong> casts false shadows over the origin, while 
+            <strong>Evil Cherish</strong> guards the last point until all three coordinates align!
           </p>
         </div>
 
         <p style="margin-bottom: 1rem;">
-          <strong>Physical Quest:</strong> Retrieve <strong>Clue Card #4</strong> attached to <em>The Front Board</em>. 
-          Plot the coordinate point <strong style="color:var(--accent-orange);">(X: 3, Y: 4)</strong> on the grid canvas below to unlock the final key:
+          <strong>Physical Quest:</strong> Retrieve <strong>Clue Card #4</strong> posted at the <em>Red Table in the Hallway</em>. 
+          Plot all three points from the physical card on the grid canvas below to unlock the key:
         </p>
 
         <canvas id="grid-canvas" width="300" height="300"></canvas>
+        <p id="grid-points-status" style="text-align: center; margin: 0.5rem 0 1rem;">Points plotted: 0 of 3</p>
 
         <div>
-          <button class="action-btn" onclick="checkStage4()">Lock Coordinate & Capture Key</button>
+          <button class="action-btn" onclick="checkStage4()">Check Three Points & Capture Key</button>
+          <button class="tool-btn" onclick="resetGridPoints()">Clear Points</button>
         </div>
         <p id="feedback-4" style="margin-top: 0.5rem; font-weight: bold;"></p>
       </div>
 
       <!-- STAGE 5: Place Value Chart -->
       <div id="stage-placevalue" class="card puzzle-stage">
-        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Billion-Column Board</h2>
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Shared Final Question: The Billion-Column Board</h2>
         <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Grade 6 Place Value: Build a number up to 1 billion</p>
 
         <div class="encounter-box">
@@ -742,6 +772,24 @@
         <p id="placevalue-feedback" style="margin-top: 0.75rem; font-weight: bold;"></p>
       </div>
 
+      <!-- Shared Final Question: Table of Values -->
+      <div id="stage-tablevalues" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">The Recess-Door Number Table</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Station: Recess Doors</p>
+        <div class="encounter-box">
+          <h3>The Last Missing Pattern</h3>
+          <p>Find Clue Card #5 posted on the Recess doors. Use its rule to complete the table. Enter each y-value in its matching column.</p>
+        </div>
+        <div class="place-value-chart-wrap">
+          <table class="table-values-chart">
+            <thead><tr><th scope="col">x</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th></tr></thead>
+            <tbody><tr><th scope="row">y</th><td><input id="table-value-0" type="text" inputmode="numeric" maxlength="2" aria-label="Table y value when x is zero"></td><td><input id="table-value-1" type="text" inputmode="numeric" maxlength="2" aria-label="Table y value when x is one"></td><td><input id="table-value-2" type="text" inputmode="numeric" maxlength="2" aria-label="Table y value when x is two"></td><td><input id="table-value-3" type="text" inputmode="numeric" maxlength="2" aria-label="Table y value when x is three"></td></tr></tbody>
+          </table>
+        </div>
+        <button class="action-btn" onclick="checkTableValues()">Check the Table</button>
+        <p id="table-values-feedback" style="margin-top: 0.75rem; font-weight: bold;"></p>
+      </div>
+
       <!-- Team Seal Stage -->
       <div id="stage-groupseal" class="card puzzle-stage">
         <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Evil Mr. Pierre's Final Seal</h2>
@@ -760,10 +808,10 @@
       <!-- Team Vault Stage -->
       <div id="stage-master" class="card puzzle-stage">
         <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); text-align: center;">Your Team's Crypt Vault</h2>
-        <p style="text-align: center; margin-bottom: 1.5rem;">Use all five vault fragments to enter the team code and seal your crypt. The whole class still needs to reunite the seal pieces to face Evil Mr. Pierre!</p>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Use all six vault fragments to enter the team code and seal your crypt. The whole class still needs to reunite the seal pieces to face Evil Mr. Pierre!</p>
 
         <div style="text-align: center; margin-bottom: 1.5rem;">
-          <input type="text" id="master-code-input" maxlength="5" placeholder="5-Digit Vault Code" style="font-size: 2rem; letter-spacing: 10px; text-align: center; max-width: 280px;" />
+          <input type="text" id="master-code-input" maxlength="6" placeholder="6-Digit Vault Code" style="font-size: 2rem; letter-spacing: 10px; text-align: center; max-width: 320px;" />
           <br /><br />
           <button class="action-btn" style="font-size: 1.2rem; padding: 1rem 2rem;" onclick="checkMasterCode()">SEAL OUR TEAM'S CRYPT</button>
         </div>
@@ -794,7 +842,7 @@
     <div class="modal-content">
       <span class="modal-close" onclick="toggleModal('printables-modal')">&times;</span>
       <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); margin-bottom: 1rem;">Classroom Off-Screen Clue Cards</h2>
-      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #ccc;">Print or display these 4 physical clue cards around Room 6Pierre:</p>
+      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #ccc;">Print or display these 5 physical clue cards around Room 6Pierre:</p>
 
       <div class="clue-card-print">
         <h4 style="color:var(--accent-orange);">Clue Card #1 — Location: Mr. Pierre's Desk</h4>
@@ -809,12 +857,30 @@
       <div class="clue-card-print">
         <h4 style="color:var(--accent-orange);">Clue Card #3 — Location: The Bookshelf</h4>
         <p><strong>Question:</strong> Transpose the original note sequence C4 - D4 - F4 up by one full step (+2 semitones). Which three notes do you play, and in what order?</p>
-        <p><strong>Transposition reminder:</strong> Move each note up two semitones. Use the frequency chart to identify the resulting notes.</p>
+        <p><strong>Transposition reminder:</strong> Move each note up two semitones. Use the chart to identify the notes you can play on the organ.</p>
+        <table class="teacher-cheat-table" style="margin-top: 0.75rem;">
+          <thead><tr><th>Note</th><th>Frequency (Hz)</th><th>Note</th><th>Frequency (Hz)</th></tr></thead>
+          <tbody>
+            <tr><td>C4</td><td>261.63</td><td>D4</td><td>293.66</td></tr>
+            <tr><td>E4</td><td>329.63</td><td>F4</td><td>349.23</td></tr>
+            <tr><td>G4</td><td>392.00</td><td>A4</td><td>440.00</td></tr>
+            <tr><td>B4</td><td>493.88</td><td>C5</td><td>523.25</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="clue-card-print">
-        <h4 style="color:var(--accent-orange);">Clue Card #4 — Location: The Front Board</h4>
-        <p><strong>Coordinate Target:</strong> Start at Origin (0,0). Move 3 units RIGHT along X, then 4 units UP along Y. Plot (3, 4).</p>
+        <h4 style="color:var(--accent-orange);">Clue Card #4 — Location: Red Table in the Hallway</h4>
+        <p><strong>Coordinate Challenge:</strong> Plot these three ordered pairs on the coordinate plane: A (2, 3), B (4, 1), and C (6, 5).</p>
+      </div>
+
+      <div class="clue-card-print">
+        <h4 style="color:var(--accent-orange);">Clue Card #5 — Location: Recess Doors</h4>
+        <p><strong>Table of Values Question:</strong> The rule is y = 2x + 1. Complete the table for x = 0, 1, 2, and 3. Record the y-values in order.</p>
+        <table class="teacher-cheat-table" style="margin-top: 0.75rem;">
+          <thead><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
+          <tbody><tr><th>y</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -856,10 +922,12 @@
 
       <h3>Game Flow</h3>
       <ol style="margin-left: 1.5rem;">
-        <li>Each team completes its four rotating stations and collects the four station fragments.</li>
-        <li>Every team completes the billion-column place-value chart and earns the shared fifth fragment, 9.</li>
+        <li>The game timer starts at 45 minutes.</li>
+        <li>Each team visits all five physical locations in its assigned route, including the Recess doors table-of-values question.</li>
+        <li>After the route, every team completes the billion-column place-value chart as the shared final question and earns fragment #5, worth 9.</li>
+        <li>The Recess-doors table-of-values station awards fragment #6, worth 7.</li>
         <li>Each team solves its own Evil Mr. Pierre challenge and earns a class-seal digit. Have them record and report it.</li>
-        <li>Each team enters five-fragment vault code <strong>53849</strong>, then reports its seal digit to you.</li>
+        <li>Each team enters six-fragment vault code <strong>538497</strong>, then reports its seal digit to you.</li>
         <li>After all five teams report, open Director Mode, choose option 5, enter each digit in its team field, and unite the class seal.</li>
       </ol>
 
@@ -868,11 +936,11 @@
         <table class="teacher-cheat-table">
           <thead><tr><th>Team</th><th>Station order</th></tr></thead>
           <tbody>
-            <tr><td>Specter</td><td>Desk → Clock → Bookshelf → Board</td></tr>
-            <tr><td>Phantom</td><td>Clock → Bookshelf → Board → Desk</td></tr>
-            <tr><td>Banshee</td><td>Bookshelf → Board → Desk → Clock</td></tr>
-            <tr><td>Gargoyle</td><td>Board → Desk → Clock → Bookshelf</td></tr>
-            <tr><td>Shadow</td><td>Desk → Bookshelf → Clock → Board</td></tr>
+            <tr><td>Specter</td><td>Desk → Clock → Bookshelf → Red Table → Recess Doors</td></tr>
+            <tr><td>Phantom</td><td>Recess Doors → Desk → Clock → Bookshelf → Red Table</td></tr>
+            <tr><td>Banshee</td><td>Bookshelf → Red Table → Recess Doors → Desk → Clock</td></tr>
+            <tr><td>Gargoyle</td><td>Red Table → Recess Doors → Desk → Clock → Bookshelf</td></tr>
+            <tr><td>Shadow</td><td>Clock → Bookshelf → Red Table → Recess Doors → Desk</td></tr>
           </tbody>
         </table>
       </div>
@@ -885,8 +953,9 @@
             <tr><td>Desk cipher</td><td>HALLOWEEN. Website shows K D O O R Z H H Q; the physical clue card provides the shift key.</td><td>5</td></tr>
             <tr><td>Clock pattern</td><td>Missing term 32; add 7 each time; enter 327.</td><td>3</td></tr>
             <tr><td>Bookshelf transposition</td><td>Clue Card #3 asks students to transpose C4-D4-F4 up one full step (+2 semitones). Students click the resulting notes on the keyboard in order: D4, E4, G4. They can clear and retry before checking.</td><td>8</td></tr>
-            <tr><td>Coordinate grid</td><td>Plot (3, 4). If wrong, the feedback gives axis-direction hints without stating the point.</td><td>4</td></tr>
+            <tr><td>Coordinate grid</td><td>Clue Card #4 at the hallway red table: plot A (2, 3), B (4, 1), and C (6, 5).</td><td>4</td></tr>
             <tr><td>Place-value chart</td><td>942,063,085. Enter digits left-to-right: 0 9 4 2 0 6 3 0 8 5. The leading digit awards the shared fifth fragment.</td><td>9 (shared)</td></tr>
+            <tr><td>Table of values</td><td>Clue Card #5 at the Recess doors: y = 2x + 1 for x = 0, 1, 2, 3. Enter 1, 3, 5, 7 in the matching columns.</td><td>7 (shared fragment #6)</td></tr>
           </tbody>
         </table>
       </div>
@@ -904,7 +973,7 @@
           </tbody>
         </table>
       </div>
-      <p><strong>Team vault code:</strong> <strong>53849</strong> (fragments 5-3-8-4-9; place-value fragment 9 is shared by every team).</p>
+      <p><strong>Team vault code:</strong> <strong>538497</strong> (fragments 5-3-8-4-9-7; the final two fragments are shared by every team).</p>
       <p><strong>Class finale entry order:</strong> Specter, Phantom, Banshee, Gargoyle, Shadow. The complete seal is <strong>98566</strong>.</p>
       <p style="margin-top: 0.75rem;"><strong>Useful controls:</strong> option 1 skips to the next stage; option 2 reveals vault answers; option 3 adds 10 minutes; option 4 opens printable clue cards; option 5 opens the class finale; option 6 opens this cheat sheet.</p>
     </div>
@@ -913,11 +982,11 @@
   <script>
     // Rotated Station Paths for 5 Workstation Groups
     const teamPaths = {
-      'Specter': ['desk', 'clock', 'bookshelf', 'board'],
-      'Phantom': ['clock', 'bookshelf', 'board', 'desk'],
-      'Banshee': ['bookshelf', 'board', 'desk', 'clock'],
-      'Gargoyle': ['board', 'desk', 'clock', 'bookshelf'],
-      'Shadow':   ['desk', 'bookshelf', 'clock', 'board']
+      'Specter': ['desk', 'clock', 'bookshelf', 'board', 'tablevalues'],
+      'Phantom': ['tablevalues', 'desk', 'clock', 'bookshelf', 'board'],
+      'Banshee': ['bookshelf', 'board', 'tablevalues', 'desk', 'clock'],
+      'Gargoyle': ['board', 'tablevalues', 'desk', 'clock', 'bookshelf'],
+      'Shadow':   ['clock', 'bookshelf', 'board', 'tablevalues', 'desk']
     };
 
     // Key Fragments per stage
@@ -926,7 +995,8 @@
       'clock': '3',
       'bookshelf': '8',
       'board': '4',
-      'placevalue': '9'
+      'placevalue': '9',
+      'tablevalues': '7'
     };
 
     const teamSealChallenges = {
@@ -941,7 +1011,7 @@
     let currentStepIndex = 0;
     let collectedKeys = {};
     let timerInterval = null;
-    let totalSeconds = 90 * 60;
+    let totalSeconds = 45 * 60;
     let isAudioMuted = false;
 
     // Canvas Background Fog Effect
@@ -1054,9 +1124,8 @@
     }
 
     function updateKeySlots() {
-      const slots = ['slot-1', 'slot-2', 'slot-3', 'slot-4', 'slot-5'];
-      const path = teamPaths[selectedTeam] || ['desk', 'clock', 'bookshelf', 'board'];
-      const keyOrder = [...path, 'placevalue'];
+      const slots = ['slot-1', 'slot-2', 'slot-3', 'slot-4', 'slot-5', 'slot-6'];
+      const keyOrder = ['desk', 'clock', 'bookshelf', 'board', 'placevalue', 'tablevalues'];
       
       slots.forEach((slotId, idx) => {
         const slotEl = document.getElementById(slotId);
@@ -1166,10 +1235,11 @@
     }
 
     // Stage 4 Verification & Grid Canvas
-    let selectedX = null, selectedY = null;
+    let selectedPoints = [];
     function initGridCanvas() {
       const canvas = document.getElementById('grid-canvas');
       const ctx = canvas.getContext('2d');
+      selectedPoints = [];
 
       function drawGrid() {
         ctx.clearRect(0,0,300,300);
@@ -1187,22 +1257,27 @@
         ctx.beginPath(); ctx.moveTo(30,0); ctx.lineTo(30,300); ctx.stroke(); // Y axis
         ctx.beginPath(); ctx.moveTo(0,270); ctx.lineTo(300,270); ctx.stroke(); // X axis
 
-        // Selected point
-        if(selectedX !== null && selectedY !== null) {
-          let px = 30 + selectedX * 30;
-          let py = 270 - selectedY * 30;
+        selectedPoints.forEach((point, index) => {
+          const px = 30 + point.x * 30;
+          const py = 270 - point.y * 30;
           ctx.fillStyle = '#38b000';
           ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
-        }
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.fillText(String.fromCharCode(65 + index), px + 8, py - 8);
+        });
       }
 
       canvas.onclick = function(e) {
+        if(selectedPoints.length >= 3) return;
         let rect = canvas.getBoundingClientRect();
-        let clickX = e.clientX - rect.left;
-        let clickY = e.clientY - rect.top;
+        let clickX = (e.clientX - rect.left) * canvas.width / rect.width;
+        let clickY = (e.clientY - rect.top) * canvas.height / rect.height;
 
-        selectedX = Math.round((clickX - 30) / 30);
-        selectedY = Math.round((270 - clickY) / 30);
+        const x = Math.round((clickX - 30) / 30);
+        const y = Math.round((270 - clickY) / 30);
+        selectedPoints.push({ x, y });
+        document.getElementById('grid-points-status').innerText = `Points plotted: ${selectedPoints.length} of 3`;
         drawGrid();
       };
 
@@ -1211,14 +1286,22 @@
 
     function checkStage4() {
       const fb = document.getElementById('feedback-4');
-      if(selectedX === 3 && selectedY === 4) {
+      const expectedPoints = ['2,3', '4,1', '6,5'];
+      const pointsMatchInOrder = selectedPoints.length === expectedPoints.length && selectedPoints.every((point, index) => `${point.x},${point.y}` === expectedPoints[index]);
+      if(pointsMatchInOrder) {
         fb.style.color = 'var(--accent-green)';
-        fb.innerText = 'Exact coordinates set! Key Fragment #4 Unlocked: [4]';
+        fb.innerText = 'All three points are correct! Key Fragment #4 Unlocked: [4]';
         setTimeout(() => markStageComplete('board'), 1200);
       } else {
         fb.style.color = 'var(--accent-red)';
-        fb.innerText = 'Evil Zoe & Evil Jacob erased your point! Check that you moved right along the horizontal axis and up along the vertical axis.';
+        fb.innerText = 'Not all three points match the physical clue card. Clear the grid and check each ordered pair.';
       }
+    }
+
+    function resetGridPoints() {
+      initGridCanvas();
+      document.getElementById('grid-points-status').innerText = 'Points plotted: 0 of 3';
+      document.getElementById('feedback-4').innerText = '';
     }
 
     function checkPlaceValue() {
@@ -1239,6 +1322,21 @@
       } else {
         fb.style.color = 'var(--accent-red)';
         fb.innerText = 'Not quite. Check each expanded-form value and include zeroes for empty places.';
+      }
+    }
+
+    function checkTableValues() {
+      const valueIds = ['table-value-0', 'table-value-1', 'table-value-2', 'table-value-3'];
+      const values = valueIds.map(id => document.getElementById(id).value.trim());
+      const fb = document.getElementById('table-values-feedback');
+
+      if(values.join(',') === '1,3,5,7') {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Correct! Shared Key Fragment #6 is [7]!';
+        setTimeout(() => markStageComplete('tablevalues'), 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Check the rule on Clue Card #5 and calculate each y-value for its x-value.';
       }
     }
 
@@ -1264,12 +1362,12 @@
     function checkMasterCode() {
       const val = document.getElementById('master-code-input').value.trim();
       const fb = document.getElementById('master-feedback');
-      if(val === '53849') {
+      if(val === '538497') {
         fb.style.color = 'var(--accent-green)';
         fb.innerHTML = `Your team sealed its crypt! Report your class-seal piece, <strong>${teamSealChallenges[selectedTeam].piece}</strong>, to the teacher. Evil Mr. Pierre is still waiting for the whole class!`;
       } else {
         fb.style.color = 'var(--accent-red)';
-        fb.innerText = 'INCORRECT VAULT CODE! Verify all 5 fragments (5 - 3 - 8 - 4 - 9).';
+        fb.innerText = 'INCORRECT VAULT CODE! Verify all 6 fragments (5 - 3 - 8 - 4 - 9 - 7).';
       }
     }
 
@@ -1287,7 +1385,7 @@
           currentStepIndex++;
           loadCurrentStage();
         } else if(choice === '2') {
-          alert("Vault Keys: Fragment #1 = 5, Fragment #2 = 3, Fragment #3 = 8, Fragment #4 = 4, Shared Fragment #5 = 9.\nTeam Vault Code = 53849");
+          alert("Vault Keys: Fragment #1 = 5, Fragment #2 = 3, Fragment #3 = 8, Fragment #4 = 4, Shared Fragment #5 = 9, Shared Fragment #6 = 7.\nTeam Vault Code = 538497");
         } else if(choice === '3') {
           totalSeconds += 600;
         } else if(choice === '4') {
