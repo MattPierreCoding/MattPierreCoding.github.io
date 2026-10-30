@@ -665,7 +665,7 @@
 
         <p style="margin-bottom: 1rem;">
           <strong>Physical Quest:</strong> Check <em>The Bookshelf</em> for <strong>Clue Card #3</strong> (Frequency & Transposition Chart). 
-          Use the question and transposition chart on the physical card, then click the three answer notes in order on the keyboard:
+          Use the physical card to transpose all three note sets, then click the nine resulting notes in order on the keyboard:
         </p>
 
         <canvas id="oscilloscope"></canvas>
@@ -681,8 +681,8 @@
           <div class="key-btn" onclick="selectOrganNote(523.25, 'C5')">C5</div>
         </div>
 
-        <p id="organ-sequence" aria-live="polite" style="margin-bottom: 0.75rem;">Notes selected: none</p>
-        <button class="action-btn" onclick="checkStage3()">Check Note Sequence & Claim Key</button>
+        <p id="organ-sequence" aria-live="polite" style="margin-bottom: 0.75rem;">Notes selected: 0 of 9</p>
+        <button class="action-btn" onclick="checkStage3()">Check All Three Sets & Claim Key</button>
         <button class="tool-btn" onclick="resetOrganSequence()">Clear Sequence</button>
         <p id="feedback-3" style="margin-top: 0.5rem; font-weight: bold;"></p>
       </div>
@@ -700,20 +700,20 @@
             <strong>Evil Timnit</strong> challenges teams to plot exact (X, Y) points. 
             <strong>Evil Linkyn</strong> whispers reversed coordinates from the hallway. 
             <strong>Evil Jimmy</strong> casts false shadows over the origin, while 
-            <strong>Evil Cherish</strong> guards the last point until all three coordinates align!
+            <strong>Evil Cherish</strong> guards the last point until all nine coordinates align!
           </p>
         </div>
 
         <p style="margin-bottom: 1rem;">
           <strong>Physical Quest:</strong> Retrieve <strong>Clue Card #4</strong> posted at the <em>Red Table in the Hallway</em>. 
-          Plot all three points from the physical card on the grid canvas below to unlock the key:
+          Plot all nine points from the three sets on the physical card, in the listed order:
         </p>
 
         <canvas id="grid-canvas" width="300" height="300"></canvas>
-        <p id="grid-points-status" style="text-align: center; margin: 0.5rem 0 1rem;">Points plotted: 0 of 3</p>
+        <p id="grid-points-status" style="text-align: center; margin: 0.5rem 0 1rem;">Points plotted: 0 of 9</p>
 
         <div>
-          <button class="action-btn" onclick="checkStage4()">Check Three Points & Capture Key</button>
+          <button class="action-btn" onclick="checkStage4()">Check All Three Sets & Capture Key</button>
           <button class="tool-btn" onclick="resetGridPoints()">Clear Points</button>
         </div>
         <p id="feedback-4" style="margin-top: 0.5rem; font-weight: bold;"></p>
@@ -856,7 +856,15 @@
 
       <div class="clue-card-print">
         <h4 style="color:var(--accent-orange);">Clue Card #3 — Location: The Bookshelf</h4>
-        <p><strong>Question:</strong> Transpose the original note sequence C4 - D4 - F4 up by one full step (+2 semitones). Which three notes do you play, and in what order?</p>
+        <p><strong>Question:</strong> For each set, transpose every note up one full step (+2 semitones). Then play the resulting nine notes in Set A, Set B, Set C order.</p>
+        <table class="teacher-cheat-table" style="margin-top: 0.75rem;">
+          <thead><tr><th>Set</th><th>Original sequence</th><th>Transposed sequence</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>C4 - D4 - F4</td><td>___ - ___ - ___</td></tr>
+            <tr><td>B</td><td>C4 - G4 - A4</td><td>___ - ___ - ___</td></tr>
+            <tr><td>C</td><td>D4 - F4 - G4</td><td>___ - ___ - ___</td></tr>
+          </tbody>
+        </table>
         <p><strong>Transposition reminder:</strong> Move each note up two semitones. Use the chart to identify the notes you can play on the organ.</p>
         <table class="teacher-cheat-table" style="margin-top: 0.75rem;">
           <thead><tr><th>Note</th><th>Frequency (Hz)</th><th>Note</th><th>Frequency (Hz)</th></tr></thead>
@@ -871,7 +879,15 @@
 
       <div class="clue-card-print">
         <h4 style="color:var(--accent-orange);">Clue Card #4 — Location: Red Table in the Hallway</h4>
-        <p><strong>Coordinate Challenge:</strong> Plot these three ordered pairs on the coordinate plane: A (2, 3), B (4, 1), and C (6, 5).</p>
+        <p><strong>Coordinate Challenge:</strong> Plot all three sets of ordered pairs in order. Label each point with its set and position.</p>
+        <table class="teacher-cheat-table" style="margin-top: 0.75rem;">
+          <thead><tr><th>Set</th><th>Point 1</th><th>Point 2</th><th>Point 3</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>A1 (1, 2)</td><td>A2 (3, 4)</td><td>A3 (5, 1)</td></tr>
+            <tr><td>B</td><td>B1 (2, 6)</td><td>B2 (4, 3)</td><td>B3 (6, 5)</td></tr>
+            <tr><td>C</td><td>C1 (1, 7)</td><td>C2 (5, 8)</td><td>C3 (7, 2)</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="clue-card-print">
@@ -952,8 +968,8 @@
           <tbody>
             <tr><td>Desk cipher</td><td>HALLOWEEN. Website shows K D O O R Z H H Q; the physical clue card provides the shift key.</td><td>5</td></tr>
             <tr><td>Clock pattern</td><td>Missing term 32; add 7 each time; enter 327.</td><td>3</td></tr>
-            <tr><td>Bookshelf transposition</td><td>Clue Card #3 asks students to transpose C4-D4-F4 up one full step (+2 semitones). Students click the resulting notes on the keyboard in order: D4, E4, G4. They can clear and retry before checking.</td><td>8</td></tr>
-            <tr><td>Coordinate grid</td><td>Clue Card #4 at the hallway red table: plot A (2, 3), B (4, 1), and C (6, 5).</td><td>4</td></tr>
+            <tr><td>Bookshelf transposition</td><td>Clue Card #3 asks for three sets, each moved up two semitones. Set A: C4-D4-F4 → D4-E4-G4. Set B: C4-G4-A4 → D4-A4-B4. Set C: D4-F4-G4 → E4-G4-A4. Click all nine resulting notes in that order.</td><td>8</td></tr>
+            <tr><td>Coordinate grid</td><td>Clue Card #4 at the hallway red table: A1 (1, 2), A2 (3, 4), A3 (5, 1); B1 (2, 6), B2 (4, 3), B3 (6, 5); C1 (1, 7), C2 (5, 8), C3 (7, 2). Plot in order.</td><td>4</td></tr>
             <tr><td>Place-value chart</td><td>942,063,085. Enter digits left-to-right: 0 9 4 2 0 6 3 0 8 5. The leading digit awards the shared fifth fragment.</td><td>9 (shared)</td></tr>
             <tr><td>Table of values</td><td>Clue Card #5 at the Recess doors: y = 2x + 1 for x = 0, 1, 2, 3. Enter 1, 3, 5, 7 in the matching columns.</td><td>7 (shared fragment #6)</td></tr>
           </tbody>
@@ -1192,16 +1208,16 @@
 
     function selectOrganNote(freq, noteName) {
       playNote(freq, noteName);
-      if(selectedOrganNotes.length >= 3) return;
+      if(selectedOrganNotes.length >= 9) return;
 
       selectedOrganNotes.push(noteName);
-      document.getElementById('organ-sequence').innerText = `Notes selected: ${selectedOrganNotes.join(' - ')}`;
+      document.getElementById('organ-sequence').innerText = `Notes selected: ${selectedOrganNotes.length} of 9 (${selectedOrganNotes.join(' - ')})`;
     }
 
     function resetOrganSequence() {
       selectedOrganNotes = [];
       const sequenceDisplay = document.getElementById('organ-sequence');
-      if(sequenceDisplay) sequenceDisplay.innerText = 'Notes selected: none';
+      if(sequenceDisplay) sequenceDisplay.innerText = 'Notes selected: 0 of 9';
       const feedback = document.getElementById('feedback-3');
       if(feedback) feedback.innerText = '';
     }
@@ -1223,10 +1239,10 @@
 
     function checkStage3() {
       const fb = document.getElementById('feedback-3');
-      const answer = ['D4', 'E4', 'G4'];
+      const answer = ['D4', 'E4', 'G4', 'D4', 'A4', 'B4', 'E4', 'G4', 'A4'];
       if(selectedOrganNotes.length === answer.length && selectedOrganNotes.every((note, index) => note === answer[index])) {
         fb.style.color = 'var(--accent-green)';
-        fb.innerText = 'Correct note sequence! Key Fragment #3 Unlocked: [8]';
+        fb.innerText = 'All three transposition sets are correct! Key Fragment #3 Unlocked: [8]';
         setTimeout(() => markStageComplete('bookshelf'), 1200);
       } else {
         fb.style.color = 'var(--accent-red)';
@@ -1260,16 +1276,18 @@
         selectedPoints.forEach((point, index) => {
           const px = 30 + point.x * 30;
           const py = 270 - point.y * 30;
-          ctx.fillStyle = '#38b000';
+          const setColors = ['#38b000', '#00b4d8', '#ffd166'];
+          ctx.fillStyle = setColors[Math.floor(index / 3)];
           ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
           ctx.fillStyle = '#fff';
           ctx.font = 'bold 12px sans-serif';
-          ctx.fillText(String.fromCharCode(65 + index), px + 8, py - 8);
+          const label = `${String.fromCharCode(65 + Math.floor(index / 3))}${(index % 3) + 1}`;
+          ctx.fillText(label, px + 8, py - 8);
         });
       }
 
       canvas.onclick = function(e) {
-        if(selectedPoints.length >= 3) return;
+        if(selectedPoints.length >= 9) return;
         let rect = canvas.getBoundingClientRect();
         let clickX = (e.clientX - rect.left) * canvas.width / rect.width;
         let clickY = (e.clientY - rect.top) * canvas.height / rect.height;
@@ -1277,7 +1295,7 @@
         const x = Math.round((clickX - 30) / 30);
         const y = Math.round((270 - clickY) / 30);
         selectedPoints.push({ x, y });
-        document.getElementById('grid-points-status').innerText = `Points plotted: ${selectedPoints.length} of 3`;
+        document.getElementById('grid-points-status').innerText = `Points plotted: ${selectedPoints.length} of 9`;
         drawGrid();
       };
 
@@ -1286,21 +1304,21 @@
 
     function checkStage4() {
       const fb = document.getElementById('feedback-4');
-      const expectedPoints = ['2,3', '4,1', '6,5'];
+      const expectedPoints = ['1,2', '3,4', '5,1', '2,6', '4,3', '6,5', '1,7', '5,8', '7,2'];
       const pointsMatchInOrder = selectedPoints.length === expectedPoints.length && selectedPoints.every((point, index) => `${point.x},${point.y}` === expectedPoints[index]);
       if(pointsMatchInOrder) {
         fb.style.color = 'var(--accent-green)';
-        fb.innerText = 'All three points are correct! Key Fragment #4 Unlocked: [4]';
+        fb.innerText = 'All three sets of points are correct! Key Fragment #4 Unlocked: [4]';
         setTimeout(() => markStageComplete('board'), 1200);
       } else {
         fb.style.color = 'var(--accent-red)';
-        fb.innerText = 'Not all three points match the physical clue card. Clear the grid and check each ordered pair.';
+        fb.innerText = 'Not all nine points match the physical clue card. Clear the grid and check each set and ordered pair.';
       }
     }
 
     function resetGridPoints() {
       initGridCanvas();
-      document.getElementById('grid-points-status').innerText = 'Points plotted: 0 of 3';
+      document.getElementById('grid-points-status').innerText = 'Points plotted: 0 of 9';
       document.getElementById('feedback-4').innerText = '';
     }
 
