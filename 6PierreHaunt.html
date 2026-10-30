@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Haunting of Room 6Pierre</title>
+  <style>
+    :root {
+      --bg-dark: #0a0612;
+      --panel-bg: rgba(20, 12, 35, 0.85);
+      --accent-purple: #9d4edd;
+      --accent-green: #38b000;
+      --accent-orange: #ff6b00;
+      --accent-red: #d90429;
+      --text-light: #f8f9fa;
+      --font-spooky: 'Georgia', serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #fog-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+    }
+
+    header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 1.5rem;
+      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(10,6,18,0) 100%);
+      border-bottom: 2px solid var(--accent-purple);
+    }
+
+    header h1 {
+      font-family: var(--font-spooky);
+      font-size: 2.5rem;
+      color: var(--accent-orange);
+      text-shadow: 0 0 10px rgba(255, 107, 0, 0.7), 0 0 20px rgba(157, 78, 221, 0.5);
+      letter-spacing: 2px;
+    }
+
+    header p {
+      font-size: 1rem;
+      color: #bbb;
+      margin-top: 0.3rem;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 1rem auto;
+      padding: 1rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--accent-purple);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Team Selection Screen */
+    .team-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .team-btn {
+      background: rgba(40, 20, 60, 0.8);
+      border: 2px solid var(--accent-purple);
+      color: #fff;
+      padding: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .team-btn:hover {
+      background: var(--accent-purple);
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px var(--accent-purple);
+    }
+
+    /* Progress & Tracker Bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(0,0,0,0.6);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-bottom: 1rem;
+    }
+
+    .timer-display {
+      font-size: 1.5rem;
+      font-family: monospace;
+      color: var(--accent-orange);
+      font-weight: bold;
+    }
+
+    .fragment-tracker {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .fragment-slot {
+      width: 35px;
+      height: 35px;
+      border: 2px dashed #666;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .fragment-slot.collected {
+      border-style: solid;
+      border-color: var(--accent-green);
+      background: rgba(56, 176, 0, 0.2);
+      color: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    /* Puzzle Sections */
+    .puzzle-stage {
+      display: none;
+    }
+
+    .puzzle-stage.active {
+      display: block;
+    }
+
+    .encounter-box {
+      background: rgba(217, 4, 41, 0.15);
+      border-left: 4px solid var(--accent-red);
+      padding: 1rem;
+      margin-bottom: 1.2rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .encounter-box h3 {
+      color: var(--accent-red);
+      margin-bottom: 0.5rem;
+      font-family: var(--font-spooky);
+    }
+
+    /* UI Inputs & Buttons */
+    input[type="text"], input[type="number"] {
+      background: rgba(0,0,0,0.7);
+      border: 1px solid var(--accent-purple);
+      color: #fff;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 1rem;
+    }
+
+    .action-btn {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #ff8533;
+    }
+
+    /* Organ / Synth Controls */
+    .organ-keys {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .key-btn {
+      background: #fff;
+      color: #000;
+      width: 50px;
+      height: 140px;
+      border-radius: 0 0 5px 5px;
+      font-weight: bold;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .key-btn:active, .key-btn.active {
+      background: #ddd;
+      transform: translateY(2px);
+    }
+
+    #oscilloscope {
+      width: 100%;
+      height: 100px;
+      background: #000;
+      border: 1px solid var(--accent-green);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    /* Coordinate Canvas */
+    #grid-canvas {
+      background: #0d081a;
+      border: 1px solid var(--accent-purple);
+      border-radius: 6px;
+      max-width: 100%;
+      cursor: crosshair;
+      display: block;
+      margin: 0 auto 1rem auto;
+    }
+
+    /* Floating Controls Toolbar */
+    .floating-tools {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 100;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn {
+      background: rgba(0,0,0,0.85);
+      border: 1px solid var(--accent-purple);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: var(--accent-purple);
+      box-shadow: 0 0 10px var(--accent-purple);
+    }
+
+    .tool-btn.muted {
+      border-color: var(--accent-red);
+      color: #ff9999;
+    }
+
+    /* Modal Overlay */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--panel-bg);
+      border: 2px solid var(--accent-orange);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .modal-close {
+      float: right;
+      color: #aaa;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Printables / Clue Cards Modal */
+    .clue-card-print {
+      border: 2px dashed var(--accent-purple);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: rgba(0,0,0,0.4);
+    }
+
+    .place-value-chart-wrap {
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .place-value-chart {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .place-value-chart th,
+    .place-value-chart td {
+      border: 1px solid var(--accent-purple);
+      padding: 0.55rem 0.35rem;
+    }
+
+    .place-value-chart th {
+      background: rgba(40, 20, 60, 0.8);
+      color: var(--accent-orange);
+      font-size: 0.8rem;
+    }
+
+    .place-value-chart input {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 0;
+      padding: 0.25rem;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .class-seal-input {
+      display: block;
+      width: 100%;
+      margin: 0.4rem 0 0;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .teacher-cheat-content {
+      max-width: 980px;
+    }
+
+    .teacher-cheat-content h3 {
+      color: var(--accent-orange);
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    .teacher-cheat-content p,
+    .teacher-cheat-content li {
+      line-height: 1.6;
+    }
+
+    .teacher-cheat-table-wrap {
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+
+    .teacher-cheat-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .teacher-cheat-table th,
+    .teacher-cheat-table td {
+      border: 1px solid rgba(157, 78, 221, 0.6);
+      padding: 0.65rem;
+      vertical-align: top;
+    }
+
+    .teacher-cheat-table th {
+      color: var(--accent-orange);
+      background: rgba(40, 20, 60, 0.8);
+    }
+
+    .class-win-screen {
+      z-index: 300;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, rgba(28, 54, 43, 0.98), rgba(4, 10, 8, 0.99) 72%);
+    }
+
+    .class-win-content {
+      position: relative;
+      z-index: 2;
+      width: min(900px, 100%);
+      text-align: center;
+      animation: win-arrive 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .class-win-kicker {
+      color: #b7f397;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .class-win-title {
+      color: #fff;
+      font-family: var(--font-spooky);
+      font-size: clamp(2.5rem, 11vw, 6rem);
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(255, 107, 0, 0.7), 0 5px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .class-win-message {
+      max-width: 650px;
+      margin: 1.5rem auto 2rem;
+      color: #e7f7e0;
+      font-size: clamp(1.05rem, 3vw, 1.4rem);
+      line-height: 1.6;
+    }
+
+    .confetti-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -12px;
+      width: var(--piece-width);
+      height: var(--piece-height);
+      left: var(--piece-left);
+      background: var(--piece-color);
+      opacity: 0;
+      animation: confetti-fall var(--piece-duration) var(--piece-delay) ease-in forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% { opacity: 1; transform: translate3d(0, -4vh, 0) rotate(0deg); }
+      100% { opacity: 0.9; transform: translate3d(var(--piece-drift), 110vh, 0) rotate(var(--piece-spin)); }
+    }
+
+    @keyframes win-arrive {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .class-win-content { animation: none; }
+      .confetti-piece { animation: none; display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="fog-canvas"></canvas>
+
+  <header>
+    <h1>THE HAUNTING OF ROOM 6PIERRE</h1>
+    <p>Work together, solve the cursed spectral riddles, and escape before midnight!</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Team Selection / Hub -->
+    <div id="team-select-card" class="card">
+      <h2 style="text-align: center; color: var(--accent-orange); font-family: var(--font-spooky);">Choose Your Team</h2>
+      <p style="text-align: center; margin-bottom: 1.5rem; color: #ccc;">Select your workstation team to view your unique station rotation path!</p>
+      
+      <div class="team-select-grid">
+        <button class="team-btn" onclick="selectTeam('Specter')">
+          <span>👻 Team Specter</span>
+          <small style="color:#aaa;">Path: Desk → Clock → Bookshelf → Board</small>
+        </button>
+        <button class="team-btn" onclick="selectTeam('Phantom')">
+          <span>🎃 Team Phantom</span>
+          <small style="color:#aaa;">Path: Clock → Bookshelf → Board → Desk</small>
+        </button>
+        <button class="team-btn" onclick="selectTeam('Banshee')">
+          <span>🕯️ Team Banshee</span>
+          <small style="color:#aaa;">Path: Bookshelf → Board → Desk → Clock</small>
+        </button>
+        <button class="team-btn" onclick="selectTeam('Gargoyle')">
+          <span>🦇 Team Gargoyle</span>
+          <small style="color:#aaa;">Path: Board → Desk → Clock → Bookshelf</small>
+        </button>
+        <button class="team-btn" onclick="selectTeam('Shadow')">
+          <span>🕷️ Team Shadow</span>
+          <small style="color:#aaa;">Path: Desk → Bookshelf → Clock → Board</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Game Screen Container -->
+    <div id="game-container" style="display: none;">
+      
+      <!-- Status & Progress Header -->
+      <div class="status-bar">
+        <div>
+          <span style="color: var(--accent-purple); font-weight: bold;">Team: </span>
+          <span id="current-team-display" style="color:#fff; font-weight:bold;"></span>
+        </div>
+
+        <div class="timer-display" id="timer">90:00</div>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 0.85rem; color:#aaa;">Vault Keys:</span>
+          <div class="fragment-tracker">
+            <div class="fragment-slot" id="slot-1">?</div>
+            <div class="fragment-slot" id="slot-2">?</div>
+            <div class="fragment-slot" id="slot-3">?</div>
+            <div class="fragment-slot" id="slot-4">?</div>
+            <div class="fragment-slot" id="slot-5">?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 1: Desk Stage (Caesar Cipher) -->
+      <div id="stage-desk" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: Mr. Pierre's Desk</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: Mr. Pierre's Desk</p>
+
+        <div class="encounter-box">
+          <h3>Spectral Encounters at the Desk</h3>
+          <p>
+            <strong>Evil Sam</strong> creeps out from the shadow under the desk, whispering riddles backward. 
+            <strong>Evil Kyla</strong> snaps a broken feather quill in half, dropping a faded paper clue. 
+            <strong>Evil Nathan</strong> scrambles the drawer labels into cryptic ciphers, while 
+            <strong>Evil Declan</strong> seals the desk with floating locks. 
+            <strong>Evil Alexander</strong> swirls out from a bottle of black ink, demanding a decoded answer, as 
+            <strong>Evil Alayna</strong> hums a backwards lullaby to reset wrong guesses!
+          </p>
+        </div>
+
+        <p style="margin-bottom: 1rem;">
+          <strong>Physical Quest:</strong> Send your Physical Searcher to <em>Mr. Pierre's Desk</em> to find <strong>Clue Card #1</strong>. 
+          Use the Caesar Shift key on the card to decode the encrypted message below!
+        </p>
+
+        <div style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 1.2rem; color: var(--accent-orange); margin-bottom: 1rem; letter-spacing: 2px; text-align: center;">
+          K D O O R Z H H Q
+        </div>
+
+        <div>
+          <label style="display: block; margin-bottom: 0.5rem;">Enter Decoded Word:</label>
+          <input type="text" id="input-stage-1" placeholder="Decoded word..." autocomplete="off" />
+          <button class="action-btn" onclick="checkStage1()">Submit Decoded Secret</button>
+        </div>
+        <p id="feedback-1" style="margin-top: 0.5rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- STAGE 2: Clock Stage (Patterning Puzzle) -->
+      <div id="stage-clock" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Cursed Clock</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: Near the Clock</p>
+
+        <div class="encounter-box">
+          <h3>Spectral Encounters Near the Clock</h3>
+          <p>
+            <strong>Evil Sonia</strong> drifts down from the ceiling clock, carrying bubbling potion vats. 
+            <strong>Evil Luke</strong> tampers with the pendulum to speed up time if pattern rules fail. 
+            <strong>Evil Loui</strong> steps out through the clock face, spinning numerical hands to confuse the sequence. 
+            <strong>Evil Cali</strong> whispers false sequence numbers from the dark corner. 
+            <strong>Evil Jihoo</strong> stands with glowing eyes demanding exact pattern rules, while 
+            <strong>Evil Serenity</strong> threatens to freeze time completely!
+          </p>
+        </div>
+
+        <p style="margin-bottom: 1rem;">
+          <strong>Physical Quest:</strong> Retrieve <strong>Clue Card #2</strong> located <em>Near the Clock</em>. 
+          The sequence and its pattern clue are only on the physical card. Use that card to determine the missing term and rule:
+        </p>
+
+        <ul style="margin-left: 1.5rem; margin-bottom: 1rem; line-height: 1.6;">
+          <li>Find the missing 5th term <strong style="color:var(--accent-orange);">[A]</strong> in the sequence.</li>
+          <li>Find the pattern step rule <strong style="color:var(--accent-orange);">[B]</strong> (How much is added each step?).</li>
+        </ul>
+
+        <div>
+          <label style="display: block; margin-bottom: 0.5rem;">Enter Key Code [Value A][Value B]:</label>
+          <input type="number" id="input-stage-2" placeholder="e.g. 327" />
+          <button class="action-btn" onclick="checkStage2()">Break Time Hex & Unlock Key</button>
+        </div>
+        <p id="feedback-2" style="margin-top: 0.5rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- STAGE 3: Bookshelf Stage (Ghostly Organ) -->
+      <div id="stage-bookshelf" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Haunted Bookshelf</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: The Bookshelf</p>
+
+        <div class="encounter-box">
+          <h3>Spectral Encounters at the Bookshelf</h3>
+          <p>
+            <strong>Evil Ira</strong> glides out from behind the encyclopedias, slamming down dissonant minor chords. 
+            <strong>Evil Harper</strong> hovers over the top shelf, fluttering phantom sheet music in the air. 
+            <strong>Evil Louise</strong> haunts the dictionary section, whispering inverted pitch names. 
+            <strong>Evil Eva</strong> creeps behind book stacks, shifting frequencies to trick your ears. 
+            <strong>Evil Vivian</strong> taps a glowing tuning fork that makes the floor vibrate, while 
+            <strong>Evil Francesco</strong> sits at a spectral organ locking the next clue!
+          </p>
+        </div>
+
+        <p style="margin-bottom: 1rem;">
+          <strong>Physical Quest:</strong> Check <em>The Bookshelf</em> for <strong>Clue Card #3</strong> (Frequency & Transposition Chart). 
+          Use the question and transposition chart on the physical card, then click the three answer notes in order on the keyboard:
+        </p>
+
+        <canvas id="oscilloscope"></canvas>
+
+        <div class="organ-keys">
+          <div class="key-btn" onclick="selectOrganNote(261.63, 'C4')">C4</div>
+          <div class="key-btn" onclick="selectOrganNote(293.66, 'D4')">D4</div>
+          <div class="key-btn" onclick="selectOrganNote(329.63, 'E4')">E4</div>
+          <div class="key-btn" onclick="selectOrganNote(349.23, 'F4')">F4</div>
+          <div class="key-btn" onclick="selectOrganNote(392.00, 'G4')">G4</div>
+          <div class="key-btn" onclick="selectOrganNote(440.00, 'A4')">A4</div>
+          <div class="key-btn" onclick="selectOrganNote(493.88, 'B4')">B4</div>
+          <div class="key-btn" onclick="selectOrganNote(523.25, 'C5')">C5</div>
+        </div>
+
+        <p id="organ-sequence" aria-live="polite" style="margin-bottom: 0.75rem;">Notes selected: none</p>
+        <button class="action-btn" onclick="checkStage3()">Check Note Sequence & Claim Key</button>
+        <button class="tool-btn" onclick="resetOrganSequence()">Clear Sequence</button>
+        <p id="feedback-3" style="margin-top: 0.5rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- STAGE 4: Front Board Stage (Coordinate Grid) -->
+      <div id="stage-board" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Front Board</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Target Location: The Front Board</p>
+
+        <div class="encounter-box">
+          <h3>Spectral Encounters at the Front Board</h3>
+          <p>
+            <strong>Evil Zoe</strong> drifts across the marker tray, drawing purple grid lines in dark energy. 
+            <strong>Evil Jacob</strong> floats near the top border, erasing plotting points when teams approach. 
+            <strong>Evil Timnit</strong> steps directly out of the screen, challenging teams to plot exact (X, Y) vectors. 
+            <strong>Evil Linkyn</strong> drags phantom clock hands toward cursed coordinates. 
+            <strong>Evil Jimmy</strong> materializes with a flickering lantern casting false shadows over (0,0), while 
+            <strong>Evil Cherish</strong> holds the final clock tower hand until coordinates align!
+          </p>
+        </div>
+
+        <p style="margin-bottom: 1rem;">
+          <strong>Physical Quest:</strong> Retrieve <strong>Clue Card #4</strong> attached to <em>The Front Board</em>. 
+          Plot the coordinate point <strong style="color:var(--accent-orange);">(X: 3, Y: 4)</strong> on the grid canvas below to unlock the final key:
+        </p>
+
+        <canvas id="grid-canvas" width="300" height="300"></canvas>
+
+        <div>
+          <button class="action-btn" onclick="checkStage4()">Lock Coordinate & Capture Key</button>
+        </div>
+        <p id="feedback-4" style="margin-top: 0.5rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- STAGE 5: Place Value Chart -->
+      <div id="stage-placevalue" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Station: The Billion-Column Board</h2>
+        <p style="color: var(--accent-purple); font-weight: bold; margin-bottom: 1rem;">Grade 6 Place Value: Build a number up to 1 billion</p>
+
+        <div class="encounter-box">
+          <h3>The Number-Sorting Specter</h3>
+          <p>Use the expanded form to place each digit in its correct column. Remember: a missing place has a value of zero.</p>
+        </div>
+
+        <p style="margin-bottom: 0.5rem;"><strong>Expanded form:</strong></p>
+        <p style="font-family: monospace; color: var(--accent-orange); line-height: 1.8; overflow-wrap: anywhere;">
+          900,000,000 + 40,000,000 + 2,000,000 + 60,000 + 3,000 + 80 + 5
+        </p>
+        <p style="margin-top: 0.75rem;">Enter one digit in each place-value column, including zeroes in empty places.</p>
+
+        <div class="place-value-chart-wrap">
+          <table class="place-value-chart">
+            <thead>
+              <tr>
+                <th scope="col">Billions</th>
+                <th scope="col">Hundred<br>Millions</th>
+                <th scope="col">Ten<br>Millions</th>
+                <th scope="col">Millions</th>
+                <th scope="col">Hundred<br>Thousands</th>
+                <th scope="col">Ten<br>Thousands</th>
+                <th scope="col">Thousands</th>
+                <th scope="col">Hundreds</th>
+                <th scope="col">Tens</th>
+                <th scope="col">Ones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input id="pv-billions" type="text" inputmode="numeric" maxlength="1" aria-label="Billions digit"></td>
+                <td><input id="pv-hundred-millions" type="text" inputmode="numeric" maxlength="1" aria-label="Hundred millions digit"></td>
+                <td><input id="pv-ten-millions" type="text" inputmode="numeric" maxlength="1" aria-label="Ten millions digit"></td>
+                <td><input id="pv-millions" type="text" inputmode="numeric" maxlength="1" aria-label="Millions digit"></td>
+                <td><input id="pv-hundred-thousands" type="text" inputmode="numeric" maxlength="1" aria-label="Hundred thousands digit"></td>
+                <td><input id="pv-ten-thousands" type="text" inputmode="numeric" maxlength="1" aria-label="Ten thousands digit"></td>
+                <td><input id="pv-thousands" type="text" inputmode="numeric" maxlength="1" aria-label="Thousands digit"></td>
+                <td><input id="pv-hundreds" type="text" inputmode="numeric" maxlength="1" aria-label="Hundreds digit"></td>
+                <td><input id="pv-tens" type="text" inputmode="numeric" maxlength="1" aria-label="Tens digit"></td>
+                <td><input id="pv-ones" type="text" inputmode="numeric" maxlength="1" aria-label="Ones digit"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button class="action-btn" onclick="checkPlaceValue()">Check Place Value Chart</button>
+        <p id="placevalue-feedback" style="margin-top: 0.75rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- Team Seal Stage -->
+      <div id="stage-groupseal" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky);">Evil Mr. Pierre's Final Seal</h2>
+        <div class="encounter-box">
+          <h3>The Headmaster Emerges</h3>
+          <p>Evil Mr. Pierre has one last lock for each team. Solve your team's question to earn a piece of the class seal. Remember your digit and report it to your teacher!</p>
+        </div>
+        <p style="margin-bottom: 0.75rem; color: var(--accent-purple); font-weight: bold;">Team: <span id="group-seal-team"></span></p>
+        <p id="group-seal-question" style="font-size: 1.2rem; margin-bottom: 1rem;"></p>
+        <label for="group-seal-answer" style="display: block; margin-bottom: 0.5rem;">Enter your answer:</label>
+        <input type="text" id="group-seal-answer" inputmode="numeric" maxlength="2" placeholder="Answer" autocomplete="off" />
+        <button class="action-btn" onclick="checkGroupSeal()">Unlock Our Seal Piece</button>
+        <p id="group-seal-feedback" style="margin-top: 0.75rem; font-weight: bold;"></p>
+      </div>
+
+      <!-- Team Vault Stage -->
+      <div id="stage-master" class="card puzzle-stage">
+        <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); text-align: center;">Your Team's Crypt Vault</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">Use all five vault fragments to enter the team code and seal your crypt. The whole class still needs to reunite the seal pieces to face Evil Mr. Pierre!</p>
+
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <input type="text" id="master-code-input" maxlength="5" placeholder="5-Digit Vault Code" style="font-size: 2rem; letter-spacing: 10px; text-align: center; max-width: 280px;" />
+          <br /><br />
+          <button class="action-btn" style="font-size: 1.2rem; padding: 1rem 2rem;" onclick="checkMasterCode()">SEAL OUR TEAM'S CRYPT</button>
+        </div>
+        <p id="master-feedback" style="text-align: center; font-weight: bold; font-size: 1.2rem;"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating Utility Tools -->
+  <div class="floating-tools">
+    <button class="tool-btn" id="audio-toggle-btn" onclick="toggleAudio()">🔊 Sound: ON</button>
+    <button class="tool-btn" onclick="toggleModal('hint-modal')">💡 Ghost Hint</button>
+    <button class="tool-btn" onclick="openTeacherPanel()">🔑 Director Mode</button>
+  </div>
+
+  <!-- Hint Modal -->
+  <div id="hint-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="toggleModal('hint-modal')">&times;</span>
+      <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); margin-bottom: 1rem;">Barnaby the Phantom's Hint</h2>
+      <p id="hint-text" style="line-height: 1.6;">Barnaby floats silently... "Complete your assigned station puzzle first, young mortal!"</p>
+    </div>
+  </div>
+
+  <!-- Printables Modal -->
+  <div id="printables-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="toggleModal('printables-modal')">&times;</span>
+      <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); margin-bottom: 1rem;">Classroom Off-Screen Clue Cards</h2>
+      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #ccc;">Print or display these 4 physical clue cards around Room 6Pierre:</p>
+
+      <div class="clue-card-print">
+        <h4 style="color:var(--accent-orange);">Clue Card #1 — Location: Mr. Pierre's Desk</h4>
+        <p><strong>Caesar Cipher Key:</strong> Shift each letter backward in the alphabet by 3 spots (A &larr; D, B &larr; E, C &larr; F...).</p>
+      </div>
+
+      <div class="clue-card-print">
+        <h4 style="color:var(--accent-orange);">Clue Card #2 — Location: Near the Clock</h4>
+        <p><strong>Patterning Sequence:</strong> Sequence: 4, 11, 18, 25, [A], 39... Step Rule: +[B] each term.</p>
+      </div>
+
+      <div class="clue-card-print">
+        <h4 style="color:var(--accent-orange);">Clue Card #3 — Location: The Bookshelf</h4>
+        <p><strong>Question:</strong> Transpose the original note sequence C4 - D4 - F4 up by one full step (+2 semitones). Which three notes do you play, and in what order?</p>
+        <p><strong>Transposition reminder:</strong> Move each note up two semitones. Use the frequency chart to identify the resulting notes.</p>
+      </div>
+
+      <div class="clue-card-print">
+        <h4 style="color:var(--accent-orange);">Clue Card #4 — Location: The Front Board</h4>
+        <p><strong>Coordinate Target:</strong> Start at Origin (0,0). Move 3 units RIGHT along X, then 4 units UP along Y. Plot (3, 4).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher-only Class Finale -->
+  <div id="class-finale-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="toggleModal('class-finale-modal')">&times;</span>
+      <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); margin-bottom: 1rem;">The Class Finale: Evil Mr. Pierre</h2>
+      <p style="margin-bottom: 1rem;">Have each group report the one-digit seal piece they earned. Enter all five pieces to bring the class together for the final confrontation.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
+        <label>Specter<input class="class-seal-input" id="class-seal-specter" type="text" inputmode="numeric" maxlength="1" aria-label="Specter seal piece"></label>
+        <label>Phantom<input class="class-seal-input" id="class-seal-phantom" type="text" inputmode="numeric" maxlength="1" aria-label="Phantom seal piece"></label>
+        <label>Banshee<input class="class-seal-input" id="class-seal-banshee" type="text" inputmode="numeric" maxlength="1" aria-label="Banshee seal piece"></label>
+        <label>Gargoyle<input class="class-seal-input" id="class-seal-gargoyle" type="text" inputmode="numeric" maxlength="1" aria-label="Gargoyle seal piece"></label>
+        <label>Shadow<input class="class-seal-input" id="class-seal-shadow" type="text" inputmode="numeric" maxlength="1" aria-label="Shadow seal piece"></label>
+      </div>
+      <button class="action-btn" onclick="checkClassFinale()">Unite the Class Seal</button>
+      <p id="class-finale-feedback" style="margin-top: 1rem; font-weight: bold; line-height: 1.6;"></p>
+    </div>
+  </div>
+
+  <div id="class-win-screen" class="modal class-win-screen" role="dialog" aria-modal="true" aria-labelledby="class-win-title" aria-describedby="class-win-message">
+    <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+    <div class="class-win-content">
+      <p class="class-win-kicker">The whole class did it</p>
+      <h2 id="class-win-title" class="class-win-title">WE ESCAPED!</h2>
+      <p id="class-win-message" class="class-win-message">Together, you broke Evil Mr. Pierre's curse and freed Room 6Pierre. Every team brought a piece of the seal. The class wins!</p>
+      <button class="action-btn" onclick="closeClassWinScreen()">Celebrate together!</button>
+    </div>
+  </div>
+
+  <!-- Teacher-only Game Cheat Sheet -->
+  <div id="teacher-cheat-modal" class="modal">
+    <div class="modal-content teacher-cheat-content">
+      <span class="modal-close" onclick="toggleModal('teacher-cheat-modal')">&times;</span>
+      <h2 style="color: var(--accent-orange); font-family: var(--font-spooky); margin-bottom: 0.5rem;">Teacher Cheat Sheet</h2>
+      <p>Director PIN: <strong>666</strong> (also accepts TEACHER). Use Director Mode and choose option 6 to open this page.</p>
+
+      <h3>Game Flow</h3>
+      <ol style="margin-left: 1.5rem;">
+        <li>Each team completes its four rotating stations and collects the four station fragments.</li>
+        <li>Every team completes the billion-column place-value chart and earns the shared fifth fragment, 9.</li>
+        <li>Each team solves its own Evil Mr. Pierre challenge and earns a class-seal digit. Have them record and report it.</li>
+        <li>Each team enters five-fragment vault code <strong>53849</strong>, then reports its seal digit to you.</li>
+        <li>After all five teams report, open Director Mode, choose option 5, enter each digit in its team field, and unite the class seal.</li>
+      </ol>
+
+      <h3>Team Routes</h3>
+      <div class="teacher-cheat-table-wrap">
+        <table class="teacher-cheat-table">
+          <thead><tr><th>Team</th><th>Station order</th></tr></thead>
+          <tbody>
+            <tr><td>Specter</td><td>Desk → Clock → Bookshelf → Board</td></tr>
+            <tr><td>Phantom</td><td>Clock → Bookshelf → Board → Desk</td></tr>
+            <tr><td>Banshee</td><td>Bookshelf → Board → Desk → Clock</td></tr>
+            <tr><td>Gargoyle</td><td>Board → Desk → Clock → Bookshelf</td></tr>
+            <tr><td>Shadow</td><td>Desk → Bookshelf → Clock → Board</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Station Answers</h3>
+      <div class="teacher-cheat-table-wrap">
+        <table class="teacher-cheat-table">
+          <thead><tr><th>Challenge</th><th>Accepted answer</th><th>Vault fragment</th></tr></thead>
+          <tbody>
+            <tr><td>Desk cipher</td><td>HALLOWEEN. Website shows K D O O R Z H H Q; the physical clue card provides the shift key.</td><td>5</td></tr>
+            <tr><td>Clock pattern</td><td>Missing term 32; add 7 each time; enter 327.</td><td>3</td></tr>
+            <tr><td>Bookshelf transposition</td><td>Clue Card #3 asks students to transpose C4-D4-F4 up one full step (+2 semitones). Students click the resulting notes on the keyboard in order: D4, E4, G4. They can clear and retry before checking.</td><td>8</td></tr>
+            <tr><td>Coordinate grid</td><td>Plot (3, 4). If wrong, the feedback gives axis-direction hints without stating the point.</td><td>4</td></tr>
+            <tr><td>Place-value chart</td><td>942,063,085. Enter digits left-to-right: 0 9 4 2 0 6 3 0 8 5. The leading digit awards the shared fifth fragment.</td><td>9 (shared)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Evil Mr. Pierre: Team Seal Pieces</h3>
+      <div class="teacher-cheat-table-wrap">
+        <table class="teacher-cheat-table">
+          <thead><tr><th>Team</th><th>Question</th><th>Answer and piece</th></tr></thead>
+          <tbody>
+            <tr><td>Specter</td><td>3/4 of 12</td><td>9</td></tr>
+            <tr><td>Phantom</td><td>40% of 20</td><td>8</td></tr>
+            <tr><td>Banshee</td><td>1/2 of 10</td><td>5</td></tr>
+            <tr><td>Gargoyle</td><td>2.4 + 3.6</td><td>6</td></tr>
+            <tr><td>Shadow</td><td>3/5 of 10</td><td>6</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Team vault code:</strong> <strong>53849</strong> (fragments 5-3-8-4-9; place-value fragment 9 is shared by every team).</p>
+      <p><strong>Class finale entry order:</strong> Specter, Phantom, Banshee, Gargoyle, Shadow. The complete seal is <strong>98566</strong>.</p>
+      <p style="margin-top: 0.75rem;"><strong>Useful controls:</strong> option 1 skips to the next stage; option 2 reveals vault answers; option 3 adds 10 minutes; option 4 opens printable clue cards; option 5 opens the class finale; option 6 opens this cheat sheet.</p>
+    </div>
+  </div>
+
+  <script>
+    // Rotated Station Paths for 5 Workstation Groups
+    const teamPaths = {
+      'Specter': ['desk', 'clock', 'bookshelf', 'board'],
+      'Phantom': ['clock', 'bookshelf', 'board', 'desk'],
+      'Banshee': ['bookshelf', 'board', 'desk', 'clock'],
+      'Gargoyle': ['board', 'desk', 'clock', 'bookshelf'],
+      'Shadow':   ['desk', 'bookshelf', 'clock', 'board']
+    };
+
+    // Key Fragments per stage
+    const stageKeys = {
+      'desk': '5',
+      'clock': '3',
+      'bookshelf': '8',
+      'board': '4',
+      'placevalue': '9'
+    };
+
+    const teamSealChallenges = {
+      'Specter': { question: 'What is 3/4 of 12?', answer: '9', piece: '9' },
+      'Phantom': { question: 'What is 40% of 20?', answer: '8', piece: '8' },
+      'Banshee': { question: 'What is 1/2 of 10?', answer: '5', piece: '5' },
+      'Gargoyle': { question: 'What is 2.4 + 3.6?', answer: '6', piece: '6' },
+      'Shadow': { question: 'What is 3/5 of 10?', answer: '6', piece: '6' }
+    };
+
+    let selectedTeam = '';
+    let currentStepIndex = 0;
+    let collectedKeys = {};
+    let timerInterval = null;
+    let totalSeconds = 90 * 60;
+    let isAudioMuted = false;
+
+    // Canvas Background Fog Effect
+    const fogCanvas = document.getElementById('fog-canvas');
+    const fogCtx = fogCanvas.getContext('2d');
+    function resizeCanvas() {
+      fogCanvas.width = window.innerWidth;
+      fogCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let particles = [];
+    for(let i = 0; i < 40; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 80 + 40,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5,
+        alpha: Math.random() * 0.3
+      });
+    }
+
+    function animateFog() {
+      fogCtx.clearRect(0, 0, fogCanvas.width, fogCanvas.height);
+      particles.forEach(p => {
+        p.x += p.dx; p.y += p.dy;
+        if(p.x < 0) p.x = fogCanvas.width;
+        if(p.x > fogCanvas.width) p.x = 0;
+        if(p.y < 0) p.y = fogCanvas.height;
+        if(p.y > fogCanvas.height) p.y = 0;
+
+        fogCtx.beginPath();
+        let grad = fogCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        grad.addColorStop(0, `rgba(157, 78, 221, ${p.alpha})`);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        fogCtx.fillStyle = grad;
+        fogCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        fogCtx.fill();
+      });
+      requestAnimationFrame(animateFog);
+    }
+    animateFog();
+
+    // Audio Mute Toggle Function
+    function toggleAudio() {
+      isAudioMuted = !isAudioMuted;
+      const btn = document.getElementById('audio-toggle-btn');
+      if(isAudioMuted) {
+        btn.innerText = '🔇 Sound: OFF';
+        btn.classList.add('muted');
+      } else {
+        btn.innerText = '🔊 Sound: ON';
+        btn.classList.remove('muted');
+      }
+    }
+
+    // Game Logic
+    function selectTeam(teamName) {
+      selectedTeam = teamName;
+      document.getElementById('team-select-card').style.display = 'none';
+      document.getElementById('game-container').style.display = 'block';
+      document.getElementById('current-team-display').innerText = teamName;
+      
+      startTimer();
+      loadCurrentStage();
+    }
+
+    function startTimer() {
+      if(timerInterval) return;
+      timerInterval = setInterval(() => {
+        if(totalSeconds <= 0) {
+          clearInterval(timerInterval);
+          alert("TIME HAS EXPIRED! Room 6Pierre is sealed in darkness forever...");
+          return;
+        }
+        totalSeconds--;
+        let mins = Math.floor(totalSeconds / 60);
+        let secs = totalSeconds % 60;
+        document.getElementById('timer').innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      }, 1000);
+    }
+
+    function loadCurrentStage() {
+      document.querySelectorAll('.puzzle-stage').forEach(el => el.classList.remove('active'));
+
+      const path = teamPaths[selectedTeam];
+      if(currentStepIndex < path.length) {
+        const stageId = 'stage-' + path[currentStepIndex];
+        document.getElementById(stageId).classList.add('active');
+        if(path[currentStepIndex] === 'board') initGridCanvas();
+        if(path[currentStepIndex] === 'bookshelf') resetOrganSequence();
+      } else if(currentStepIndex === path.length) {
+        document.getElementById('stage-placevalue').classList.add('active');
+      } else if(currentStepIndex === path.length + 1) {
+        document.getElementById('stage-groupseal').classList.add('active');
+        document.getElementById('group-seal-team').innerText = selectedTeam;
+        document.getElementById('group-seal-question').innerText = teamSealChallenges[selectedTeam].question;
+      } else {
+        document.getElementById('stage-master').classList.add('active');
+      }
+      updateKeySlots();
+    }
+
+    function markStageComplete(stageName) {
+      collectedKeys[stageName] = stageKeys[stageName];
+      currentStepIndex++;
+      loadCurrentStage();
+    }
+
+    function updateKeySlots() {
+      const slots = ['slot-1', 'slot-2', 'slot-3', 'slot-4', 'slot-5'];
+      const path = teamPaths[selectedTeam] || ['desk', 'clock', 'bookshelf', 'board'];
+      const keyOrder = [...path, 'placevalue'];
+      
+      slots.forEach((slotId, idx) => {
+        const slotEl = document.getElementById(slotId);
+        const stageName = keyOrder[idx];
+        if(collectedKeys[stageName]) {
+          slotEl.innerText = collectedKeys[stageName];
+          slotEl.classList.add('collected');
+        } else {
+          slotEl.innerText = '?';
+          slotEl.classList.remove('collected');
+        }
+      });
+    }
+
+    // Stage 1 Verification
+    function checkStage1() {
+      const val = document.getElementById('input-stage-1').value.trim().toLowerCase();
+      const fb = document.getElementById('feedback-1');
+      if(val === 'halloween') {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Correct! Key Fragment #1 Unlocked: [5]';
+        setTimeout(() => markStageComplete('desk'), 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Evil Sam & Evil Nathan laugh! Incorrect word. Try again.';
+      }
+    }
+
+    // Stage 2 Verification (Patterning Question)
+    function checkStage2() {
+      const val = document.getElementById('input-stage-2').value.trim();
+      const fb = document.getElementById('feedback-2');
+      if(val === '327') {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Correct patterning rule! Key Fragment #2 Unlocked: [3]';
+        setTimeout(() => markStageComplete('clock'), 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Evil Sonia & Evil Luke laugh! Check your pattern calculation.';
+      }
+    }
+
+    // Stage 3 Verification & Audio Synth
+    let audioCtx = null;
+    let selectedOrganNotes = [];
+
+    function playNote(freq, noteName) {
+      if(isAudioMuted) return; // Silent if muted
+
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      let osc = audioCtx.createOscillator();
+      let gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.8);
+
+      drawOscilloscopeWave();
+    }
+
+    function selectOrganNote(freq, noteName) {
+      playNote(freq, noteName);
+      if(selectedOrganNotes.length >= 3) return;
+
+      selectedOrganNotes.push(noteName);
+      document.getElementById('organ-sequence').innerText = `Notes selected: ${selectedOrganNotes.join(' - ')}`;
+    }
+
+    function resetOrganSequence() {
+      selectedOrganNotes = [];
+      const sequenceDisplay = document.getElementById('organ-sequence');
+      if(sequenceDisplay) sequenceDisplay.innerText = 'Notes selected: none';
+      const feedback = document.getElementById('feedback-3');
+      if(feedback) feedback.innerText = '';
+    }
+
+    function drawOscilloscopeWave() {
+      const canvas = document.getElementById('oscilloscope');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.strokeStyle = '#38b000';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for(let x=0; x<canvas.width; x+=5) {
+        let y = (canvas.height/2) + Math.sin(x * 0.1 + Date.now()*0.01) * 20;
+        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    function checkStage3() {
+      const fb = document.getElementById('feedback-3');
+      const answer = ['D4', 'E4', 'G4'];
+      if(selectedOrganNotes.length === answer.length && selectedOrganNotes.every((note, index) => note === answer[index])) {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Correct note sequence! Key Fragment #3 Unlocked: [8]';
+        setTimeout(() => markStageComplete('bookshelf'), 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'That sequence does not unlock the key. Use the physical clue card, then clear the sequence and try again.';
+      }
+    }
+
+    // Stage 4 Verification & Grid Canvas
+    let selectedX = null, selectedY = null;
+    function initGridCanvas() {
+      const canvas = document.getElementById('grid-canvas');
+      const ctx = canvas.getContext('2d');
+
+      function drawGrid() {
+        ctx.clearRect(0,0,300,300);
+        ctx.strokeStyle = 'rgba(157, 78, 221, 0.3)';
+        ctx.lineWidth = 1;
+
+        for(let i=0; i<=300; i+=30) {
+          ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,300); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(300,i); ctx.stroke();
+        }
+
+        // Draw Axes
+        ctx.strokeStyle = '#ff6b00';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(30,0); ctx.lineTo(30,300); ctx.stroke(); // Y axis
+        ctx.beginPath(); ctx.moveTo(0,270); ctx.lineTo(300,270); ctx.stroke(); // X axis
+
+        // Selected point
+        if(selectedX !== null && selectedY !== null) {
+          let px = 30 + selectedX * 30;
+          let py = 270 - selectedY * 30;
+          ctx.fillStyle = '#38b000';
+          ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
+        }
+      }
+
+      canvas.onclick = function(e) {
+        let rect = canvas.getBoundingClientRect();
+        let clickX = e.clientX - rect.left;
+        let clickY = e.clientY - rect.top;
+
+        selectedX = Math.round((clickX - 30) / 30);
+        selectedY = Math.round((270 - clickY) / 30);
+        drawGrid();
+      };
+
+      drawGrid();
+    }
+
+    function checkStage4() {
+      const fb = document.getElementById('feedback-4');
+      if(selectedX === 3 && selectedY === 4) {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Exact coordinates set! Key Fragment #4 Unlocked: [4]';
+        setTimeout(() => markStageComplete('board'), 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Evil Zoe & Evil Jacob erased your point! Check that you moved right along the horizontal axis and up along the vertical axis.';
+      }
+    }
+
+    function checkPlaceValue() {
+      const placeIds = [
+        'pv-billions', 'pv-hundred-millions', 'pv-ten-millions', 'pv-millions',
+        'pv-hundred-thousands', 'pv-ten-thousands', 'pv-thousands', 'pv-hundreds',
+        'pv-tens', 'pv-ones'
+      ];
+      const answer = placeIds.map(id => document.getElementById(id).value.trim()).join('');
+      const fb = document.getElementById('placevalue-feedback');
+
+      if(answer === '0942063085') {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = 'Correct! The number is 942,063,085. Shared Key Fragment #5 is [9]!';
+        setTimeout(() => {
+          markStageComplete('placevalue');
+        }, 1200);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Not quite. Check each expanded-form value and include zeroes for empty places.';
+      }
+    }
+
+    function checkGroupSeal() {
+      const challenge = teamSealChallenges[selectedTeam];
+      const answer = document.getElementById('group-seal-answer').value.trim();
+      const fb = document.getElementById('group-seal-feedback');
+
+      if(answer === challenge.answer) {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerText = `Correct! Your class-seal piece is ${challenge.piece}. Remember this digit and report it to your teacher!`;
+        setTimeout(() => {
+          currentStepIndex++;
+          loadCurrentStage();
+        }, 1800);
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'Not quite. Check the fraction, percent, or decimal calculation and try again.';
+      }
+    }
+
+    // Team Vault Check
+    function checkMasterCode() {
+      const val = document.getElementById('master-code-input').value.trim();
+      const fb = document.getElementById('master-feedback');
+      if(val === '53849') {
+        fb.style.color = 'var(--accent-green)';
+        fb.innerHTML = `Your team sealed its crypt! Report your class-seal piece, <strong>${teamSealChallenges[selectedTeam].piece}</strong>, to the teacher. Evil Mr. Pierre is still waiting for the whole class!`;
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'INCORRECT VAULT CODE! Verify all 5 fragments (5 - 3 - 8 - 4 - 9).';
+      }
+    }
+
+    // Modal Utility Functions
+    function toggleModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.toggle('active');
+    }
+
+    function openTeacherPanel() {
+      const pin = prompt("Enter Director PIN:");
+      if(pin === '666' || pin === 'TEACHER' || pin === 'teacher') {
+        let choice = prompt("DIRECTOR OVERRIDE PANEL:\n1. Skip to Next Stage\n2. Reveal All Vault Keys\n3. Add 10 Minutes to Timer\n4. Open Printable Cards\n5. Open Class Finale\n6. Open Teacher Cheat Sheet");
+        if(choice === '1') {
+          currentStepIndex++;
+          loadCurrentStage();
+        } else if(choice === '2') {
+          alert("Vault Keys: Fragment #1 = 5, Fragment #2 = 3, Fragment #3 = 8, Fragment #4 = 4, Shared Fragment #5 = 9.\nTeam Vault Code = 53849");
+        } else if(choice === '3') {
+          totalSeconds += 600;
+        } else if(choice === '4') {
+          toggleModal('printables-modal');
+        } else if(choice === '5') {
+          toggleModal('class-finale-modal');
+        } else if(choice === '6') {
+          toggleModal('teacher-cheat-modal');
+        }
+      } else {
+        alert("Incorrect PIN!");
+      }
+    }
+
+    function checkClassFinale() {
+      const teamOrder = ['specter', 'phantom', 'banshee', 'gargoyle', 'shadow'];
+      const classSeal = teamOrder.map(team => document.getElementById(`class-seal-${team}`).value.trim()).join('');
+      const fb = document.getElementById('class-finale-feedback');
+
+      if(classSeal === '98566') {
+        document.getElementById('class-finale-modal').classList.remove('active');
+        document.getElementById('class-win-screen').classList.add('active');
+        createConfetti();
+        document.getElementById('class-win-title').focus();
+      } else {
+        fb.style.color = 'var(--accent-red)';
+        fb.innerText = 'The class seal is incomplete. Check that each group reported its earned digit in the correct team field.';
+      }
+    }
+
+    function createConfetti() {
+      const layer = document.getElementById('confetti-layer');
+      layer.replaceChildren();
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const colors = ['#ff6b00', '#38b000', '#f8f9fa', '#ffd166', '#9d4edd', '#00b4d8'];
+      for(let index = 0; index < 120; index++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.setProperty('--piece-left', `${Math.random() * 100}%`);
+        piece.style.setProperty('--piece-color', colors[index % colors.length]);
+        piece.style.setProperty('--piece-width', `${6 + Math.random() * 7}px`);
+        piece.style.setProperty('--piece-height', `${8 + Math.random() * 10}px`);
+        piece.style.setProperty('--piece-duration', `${3.2 + Math.random() * 3}s`);
+        piece.style.setProperty('--piece-delay', `${Math.random() * 1.8}s`);
+        piece.style.setProperty('--piece-drift', `${Math.random() * 180 - 90}px`);
+        piece.style.setProperty('--piece-spin', `${Math.random() * 1080 - 540}deg`);
+        layer.appendChild(piece);
+      }
+    }
+
+    function closeClassWinScreen() {
+      document.getElementById('class-win-screen').classList.remove('active');
+      document.getElementById('confetti-layer').replaceChildren();
+    }
+  </script>
+</body>
+</html>
